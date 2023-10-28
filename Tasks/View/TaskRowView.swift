@@ -67,10 +67,10 @@ struct TaskRowView: View {
                 .symbolRenderingMode(.multicolor)
                 .font(.title2)
                 .foregroundStyle(.blue)
+                .contentTransition(.symbolEffect(.replace))
                 .frame(width: side, height: side)
         } //: Button
         .buttonStyle(.plain)
-        .animation(.bouncy, value: item.isCompleted)
     }
     
     // MARK: - Field

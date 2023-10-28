@@ -14,6 +14,7 @@ struct MainView: View {
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.order) private var tasks: [Task]
+    @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled: Bool = false
     
     // MARK: - Update
     
@@ -41,7 +42,31 @@ struct MainView: View {
             .overlay(alignment: .bottomTrailing) {
                 plus
             }
+            .toolbar {
+                toolbar
+            }
         } //: NavigationStack
+        .environment(\.colorScheme, isDarkModeEnabled ? .dark : .light)
+        .animation(.smooth, value: isDarkModeEnabled)
+    }
+    
+    // MARK: - Toolbar
+    
+    @ToolbarContentBuilder
+    private var toolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                isDarkModeEnabled.toggle()
+            } label: {
+                let side: CGFloat = 44
+                
+                Image(systemName: isDarkModeEnabled ? "sun.max.fill" : "moon.fill")
+                    .font(.headline)
+                    .symbolEffect(.bounce, value: isDarkModeEnabled)
+                    .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
+                    .frame(width: side, height: side)
+            } //: Button
+        } //: ToolbarItem
     }
     
     // MARK: - Empty
