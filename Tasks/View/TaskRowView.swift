@@ -6,17 +6,42 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TaskRowView: View {
     
     // MARK: - Properties
-
-    @Binding var item: Task
     
-    @State private var text: String = .empty
+    @Environment(\.modelContext) private var context
+    @Query(sort: \Task.order) private var tasks: [Task]
+
+    @Bindable var item: Task
     
     private let inset: CGFloat = 8
-    private let side: CGFloat = 28
+    
+    // MARK: - Complete
+    
+    private func complete() {
+        item.isCompleted.toggle()
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        
+        var temp = tasks
+        temp = temp.sorted(by: { !$0.isCompleted && $1.isCompleted })
+        
+        DispatchQueue.main.schedule(after: .init(.now() + 0.25)) {
+            update(temp)
+        }
+    }
+    
+    // MARK: - Update
+    
+    private func update(_ with: [Task]) {
+        for order in with.indices {
+            if let index = tasks.firstIndex(where: { with[order].id == $0.id }) {
+                tasks[index].order = order
+            }
+        }
+    }
     
     // MARK: - Body
     
@@ -28,37 +53,35 @@ struct TaskRowView: View {
         .listRowSeparator(.hidden)
         .listSectionSeparator(.hidden)
         .listRowInsets(EdgeInsets(top: .zero, leading: inset, bottom: .zero, trailing: inset))
-        .overlay(alignment: .bottom) {
-            Divider()
-                .padding(.leading, side + inset * 2)
-        }
     }
     
     // MARK: - Checkmark
     
     private var checkmark: some View {
         Button {
-            item.isCompleted.toggle()
+            complete()
         } label: {
+            let side: CGFloat = 44
+            
             Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+                .symbolRenderingMode(.multicolor)
                 .font(.title2)
                 .foregroundStyle(.blue)
                 .frame(width: side, height: side)
-                .padding(inset)
-                .animation(.spring, value: item.isCompleted)
         } //: Button
         .buttonStyle(.plain)
+        .animation(.bouncy, value: item.isCompleted)
     }
     
     // MARK: - Field
     
     private var field: some View {
-        TextField("Title", text: $text)
+        TextField("Title", text: $item.title)
     }
 }
 
 // MARK: - Preview
 
 #Preview("Row") {
-    TaskRowView(item: .constant(Task()))
+    TaskRowView(item: Task(order: .zero))
 }

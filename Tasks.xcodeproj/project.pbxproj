@@ -61,18 +61,18 @@
 				F45ADD902AEBE6C3000F7211 /* View */,
 				F45ADD8F2AEBE6BB000F7211 /* Model */,
 				F45ADD8E2AEBE69B000F7211 /* Helpers */,
+				F45ADD7F2AEAA4D4000F7211 /* Previews */,
 				F45ADD7D2AEAA4D4000F7211 /* Assets.xcassets */,
-				F45ADD7F2AEAA4D4000F7211 /* Preview Content */,
 			);
 			path = Tasks;
 			sourceTree = "<group>";
 		};
-		F45ADD7F2AEAA4D4000F7211 /* Preview Content */ = {
+		F45ADD7F2AEAA4D4000F7211 /* Previews */ = {
 			isa = PBXGroup;
 			children = (
 				F45ADD802AEAA4D4000F7211 /* Preview Assets.xcassets */,
 			);
-			path = "Preview Content";
+			path = Previews;
 			sourceTree = "<group>";
 		};
 		F45ADD8D2AEBE693000F7211 /* App */ = {
@@ -315,7 +315,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Previews\"";
 				DEVELOPMENT_TEAM = BJBR5CVTQD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -347,7 +347,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Previews\"";
 				DEVELOPMENT_TEAM = BJBR5CVTQD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

@@ -6,12 +6,24 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MainView: View {
     
     // MARK: - Properties
     
-    @State private var tasks: [Task] = []
+    @Environment(\.modelContext) private var context
+    @Query(sort: \Task.order) private var tasks: [Task]
+    
+    // MARK: - Update
+    
+    private func update(_ with: [Task]) {
+        for order in with.indices {
+            if let index = tasks.firstIndex(where: { with[order].id == $0.id }) {
+                tasks[index].order = order
+            }
+        }
+    }
     
     // MARK: - Body
     
@@ -42,29 +54,34 @@ struct MainView: View {
     
     private var list: some View {
         List {
-            ForEach($tasks) { $task in
-                TaskRowView(item: $task)
+            ForEach(tasks) {
+                TaskRowView(item: $0)
             } //: ForEach
             .onMove { from, to in
-                tasks.move(fromOffsets: from, toOffset: to)
+                var temp = tasks
+                temp.move(fromOffsets: from, toOffset: to)
+                update(temp)
             }
-            .onDelete { at in
-                tasks.remove(atOffsets: at)
+            .onDelete { indices in
+                indices.forEach({ context.delete(tasks[$0]) })
             }
         } //: List
         .scrollIndicators(.hidden)
         .listStyle(.plain)
+        .animation(.default, value: tasks)
     }
     
     // MARK: - Plus
     
     private var plus: some View {
         Button {
-            tasks.insert(Task(), at: .zero)
+            context.insert(Task(order: tasks.count))
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         } label: {
             Image(systemName: "plus.circle.fill")
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, .blue)
                 .font(.largeTitle)
-                .foregroundStyle(.blue)
                 .padding(16)
         } //: Button
         .buttonStyle(.plain)
