@@ -14,7 +14,8 @@ struct MainView: View {
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.order) private var tasks: [Task]
-    @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled: Bool = false
+    @AppStorage("isDarkEnabled") private var isDarkModeEnabled: Bool = false
+    @AppStorage("theme") private var theme: Theme = .blue
     
     // MARK: - Update
     
@@ -55,18 +56,47 @@ struct MainView: View {
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                isDarkModeEnabled.toggle()
-            } label: {
-                let side: CGFloat = 44
-                
-                Image(systemName: isDarkModeEnabled ? "sun.max.fill" : "moon.fill")
-                    .font(.headline)
-                    .symbolEffect(.bounce, value: isDarkModeEnabled)
-                    .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
-                    .frame(width: side, height: side)
-            } //: Button
+            HStack(spacing: .zero) {
+                palette
+                switcher
+            } //: HStack
         } //: ToolbarItem
+    }
+    
+    // MARK: - Palette
+    
+    private var palette: some View {
+        Menu {
+            Picker(String.empty, selection: $theme) {
+                ForEach(Theme.allCases) {
+                    Text($0.name)
+                        .tag($0)
+                } //: ForEach
+            } //: Picker
+        } label: {
+            let side: CGFloat = 44
+            
+            Image(systemName: "circle.inset.filled")
+                .font(.headline)
+                .frame(width: side, height: side)
+                .foregroundStyle(theme.color)
+        } //: Menu
+    }
+    
+    // MARK: - Switcher
+    
+    private var switcher: some View {
+        Button {
+            isDarkModeEnabled.toggle()
+        } label: {
+            let side: CGFloat = 44
+            
+            Image(systemName: isDarkModeEnabled ? "sun.max.fill" : "moon.fill")
+                .font(.headline)
+                .symbolEffect(.bounce, value: isDarkModeEnabled)
+                .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
+                .frame(width: side, height: side)
+        } //: Button
     }
     
     // MARK: - Empty
@@ -105,7 +135,7 @@ struct MainView: View {
         } label: {
             Image(systemName: "plus.circle.fill")
                 .symbolRenderingMode(.palette)
-                .foregroundStyle(.white, .blue)
+                .foregroundStyle(.white, theme.color)
                 .font(.largeTitle)
                 .padding(16)
         } //: Button

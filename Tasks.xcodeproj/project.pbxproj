@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F43CC4542AEE59AB00662E9D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43CC4532AEE59AB00662E9D /* Theme.swift */; };
 		F45ADD7A2AEAA4D2000F7211 /* TasksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45ADD792AEAA4D2000F7211 /* TasksApp.swift */; };
 		F45ADD7C2AEAA4D2000F7211 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45ADD7B2AEAA4D2000F7211 /* MainView.swift */; };
 		F45ADD7E2AEAA4D4000F7211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F45ADD7D2AEAA4D4000F7211 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F43CC4532AEE59AB00662E9D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		F45ADD762AEAA4D2000F7211 /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F45ADD792AEAA4D2000F7211 /* TasksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksApp.swift; sourceTree = "<group>"; };
 		F45ADD7B2AEAA4D2000F7211 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				F45ADD892AEB02B7000F7211 /* Task.swift */,
+				F43CC4532AEE59AB00662E9D /* Theme.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -181,6 +184,7 @@
 				F45ADD8C2AEB030F000F7211 /* Extensions.swift in Sources */,
 				F45ADD8A2AEB02B7000F7211 /* Task.swift in Sources */,
 				F45ADD7C2AEAA4D2000F7211 /* MainView.swift in Sources */,
+				F43CC4542AEE59AB00662E9D /* Theme.swift in Sources */,
 				F45ADD882AEB0298000F7211 /* TaskRowView.swift in Sources */,
 				F45ADD7A2AEAA4D2000F7211 /* TasksApp.swift in Sources */,
 			);
