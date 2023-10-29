@@ -14,7 +14,7 @@ struct MainView: View {
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.order) private var tasks: [Task]
-    @AppStorage("isDarkEnabled") private var isDarkModeEnabled: Bool = false
+    @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled: Bool = false
     @AppStorage("theme") private var theme: Theme = .blue
     
     // MARK: - Update
@@ -81,6 +81,9 @@ struct MainView: View {
                 .frame(width: side, height: side)
                 .foregroundStyle(theme.color)
         } //: Menu
+        .onChange(of: theme) {
+            $1.icon.change(isDark: isDarkModeEnabled)
+        }
     }
     
     // MARK: - Switcher
@@ -97,6 +100,9 @@ struct MainView: View {
                 .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
                 .frame(width: side, height: side)
         } //: Button
+        .onChange(of: isDarkModeEnabled) {
+            theme.icon.change(isDark: $1)
+        }
     }
     
     // MARK: - Empty

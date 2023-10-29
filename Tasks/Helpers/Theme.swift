@@ -14,11 +14,11 @@ enum Theme: String, Identifiable, CaseIterable {
     case red, orange, yellow, green, blue, purple, indigo
     
     var id: String {
-        self.rawValue
+        rawValue
     }
     
     var name: String {
-        self.rawValue.prefix(1).uppercased() + self.rawValue.dropFirst()
+        rawValue.capitalized
     }
     
     var color: Color {
@@ -38,5 +38,9 @@ enum Theme: String, Identifiable, CaseIterable {
         case .indigo:
             Color.indigo
         }
+    }
+    
+    var icon: Icon {
+        Icon(light: "Light" + name, dark: "Dark" + name)
     }
 }
