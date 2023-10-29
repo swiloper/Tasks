@@ -17,6 +17,7 @@ struct TaskRowView: View {
     @AppStorage("theme") private var theme: Theme = .blue
 
     @Bindable var item: Task
+    @FocusState var focused: String?
     
     private let inset: CGFloat = 8
     
@@ -77,6 +78,7 @@ struct TaskRowView: View {
     
     private var field: some View {
         TextField("Title", text: $item.title)
+            .focused($focused, equals: item.id)
     }
 }
 

@@ -16,6 +16,7 @@ struct MainView: View {
     @Query(sort: \Task.order) private var tasks: [Task]
     @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled: Bool = false
     @AppStorage("theme") private var theme: Theme = .blue
+    @FocusState private var focused: String?
     
     // MARK: - Update
     
@@ -80,8 +81,8 @@ struct MainView: View {
             
             Image(systemName: "circle.inset.filled")
                 .font(.headline)
-                .frame(width: side, height: side)
                 .foregroundStyle(theme.color)
+                .frame(width: side, height: side)
         } //: Menu
         .onChange(of: theme) {
             $1.icon.change(isDark: isDarkModeEnabled)
@@ -117,16 +118,20 @@ struct MainView: View {
     
     private var list: some View {
         List {
-            ForEach(tasks) {
-                TaskRowView(item: $0)
+            ForEach(tasks) { task in
+                TaskRowView(item: task, focused: _focused)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            context.delete(task)
+                        } label: {
+                            Image(systemName: "trash.fill")
+                        } //: Button
+                    }
             } //: ForEach
             .onMove { from, to in
                 var temp = tasks
                 temp.move(fromOffsets: from, toOffset: to)
                 update(temp)
-            }
-            .onDelete { indices in
-                indices.forEach({ context.delete(tasks[$0]) })
             }
         } //: List
         .scrollIndicators(.hidden)
@@ -138,7 +143,9 @@ struct MainView: View {
     
     private var plus: some View {
         Button {
-            context.insert(Task(order: tasks.count))
+            let new = Task(order: tasks.count)
+            context.insert(new)
+            focused = new.id
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         } label: {
             Image(systemName: "plus.circle.fill")
