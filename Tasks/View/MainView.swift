@@ -15,6 +15,8 @@ struct MainView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.order) private var tasks: [Task]
     @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled: Bool = false
+    @AppStorage("theme") private var theme: Theme = .blue
+    @FocusState private var focused: String?
     
     // MARK: - Update
     
@@ -55,18 +57,55 @@ struct MainView: View {
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
-            Button {
-                isDarkModeEnabled.toggle()
-            } label: {
-                let side: CGFloat = 44
-                
-                Image(systemName: isDarkModeEnabled ? "sun.max.fill" : "moon.fill")
-                    .font(.headline)
-                    .symbolEffect(.bounce, value: isDarkModeEnabled)
-                    .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
-                    .frame(width: side, height: side)
-            } //: Button
+            HStack(spacing: .zero) {
+                palette
+                switcher
+            } //: HStack
         } //: ToolbarItem
+    }
+    
+    // MARK: - Palette
+    
+    private var palette: some View {
+        Menu {
+            Picker(String.empty, selection: $theme) {
+                ForEach(Theme.allCases) {
+                    Label($0.name, systemImage: "circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle($0.color)
+                        .tag($0)
+                } //: ForEach
+            } //: Picker
+        } label: {
+            let side: CGFloat = 44
+            
+            Image(systemName: "circle.inset.filled")
+                .font(.headline)
+                .foregroundStyle(theme.color)
+                .frame(width: side, height: side)
+        } //: Menu
+        .onChange(of: theme) {
+            $1.icon.change(isDark: isDarkModeEnabled)
+        }
+    }
+    
+    // MARK: - Switcher
+    
+    private var switcher: some View {
+        Button {
+            isDarkModeEnabled.toggle()
+        } label: {
+            let side: CGFloat = 44
+            
+            Image(systemName: isDarkModeEnabled ? "sun.max.fill" : "moon.fill")
+                .font(.headline)
+                .symbolEffect(.bounce, value: isDarkModeEnabled)
+                .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
+                .frame(width: side, height: side)
+        } //: Button
+        .onChange(of: isDarkModeEnabled) {
+            theme.icon.change(isDark: $1)
+        }
     }
     
     // MARK: - Empty
@@ -79,16 +118,20 @@ struct MainView: View {
     
     private var list: some View {
         List {
-            ForEach(tasks) {
-                TaskRowView(item: $0)
+            ForEach(tasks) { task in
+                TaskRowView(item: task, focused: _focused)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            context.delete(task)
+                        } label: {
+                            Image(systemName: "trash.fill")
+                        } //: Button
+                    }
             } //: ForEach
             .onMove { from, to in
                 var temp = tasks
                 temp.move(fromOffsets: from, toOffset: to)
                 update(temp)
-            }
-            .onDelete { indices in
-                indices.forEach({ context.delete(tasks[$0]) })
             }
         } //: List
         .scrollIndicators(.hidden)
@@ -100,12 +143,14 @@ struct MainView: View {
     
     private var plus: some View {
         Button {
-            context.insert(Task(order: tasks.count))
+            let new = Task(order: tasks.count)
+            context.insert(new)
+            focused = new.id
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         } label: {
             Image(systemName: "plus.circle.fill")
                 .symbolRenderingMode(.palette)
-                .foregroundStyle(.white, .blue)
+                .foregroundStyle(.white, theme.color)
                 .font(.largeTitle)
                 .padding(16)
         } //: Button

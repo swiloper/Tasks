@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F43CC4542AEE59AB00662E9D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43CC4532AEE59AB00662E9D /* Theme.swift */; };
+		F43CC45A2AEE794D00662E9D /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F43CC4592AEE794D00662E9D /* Icon.swift */; };
 		F45ADD7A2AEAA4D2000F7211 /* TasksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45ADD792AEAA4D2000F7211 /* TasksApp.swift */; };
 		F45ADD7C2AEAA4D2000F7211 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45ADD7B2AEAA4D2000F7211 /* MainView.swift */; };
 		F45ADD7E2AEAA4D4000F7211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F45ADD7D2AEAA4D4000F7211 /* Assets.xcassets */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F43CC4532AEE59AB00662E9D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F43CC4592AEE794D00662E9D /* Icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icon.swift; sourceTree = "<group>"; };
 		F45ADD762AEAA4D2000F7211 /* Tasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F45ADD792AEAA4D2000F7211 /* TasksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksApp.swift; sourceTree = "<group>"; };
 		F45ADD7B2AEAA4D2000F7211 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -86,6 +90,8 @@
 		F45ADD8E2AEBE69B000F7211 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				F43CC4592AEE794D00662E9D /* Icon.swift */,
+				F43CC4532AEE59AB00662E9D /* Theme.swift */,
 				F45ADD8B2AEB030F000F7211 /* Extensions.swift */,
 			);
 			path = Helpers;
@@ -180,7 +186,9 @@
 			files = (
 				F45ADD8C2AEB030F000F7211 /* Extensions.swift in Sources */,
 				F45ADD8A2AEB02B7000F7211 /* Task.swift in Sources */,
+				F43CC45A2AEE794D00662E9D /* Icon.swift in Sources */,
 				F45ADD7C2AEAA4D2000F7211 /* MainView.swift in Sources */,
+				F43CC4542AEE59AB00662E9D /* Theme.swift in Sources */,
 				F45ADD882AEB0298000F7211 /* TaskRowView.swift in Sources */,
 				F45ADD7A2AEAA4D2000F7211 /* TasksApp.swift in Sources */,
 			);
@@ -313,6 +321,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Previews\"";
@@ -345,6 +354,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Tasks/Previews\"";

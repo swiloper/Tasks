@@ -14,8 +14,10 @@ struct TaskRowView: View {
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.order) private var tasks: [Task]
+    @AppStorage("theme") private var theme: Theme = .blue
 
     @Bindable var item: Task
+    @FocusState var focused: String?
     
     private let inset: CGFloat = 8
     
@@ -64,10 +66,9 @@ struct TaskRowView: View {
             let side: CGFloat = 44
             
             Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
-                .symbolRenderingMode(.multicolor)
                 .font(.title2)
-                .foregroundStyle(.blue)
-                .contentTransition(.symbolEffect(.replace))
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(item.isCompleted ? .white : theme.color, theme.color)
                 .frame(width: side, height: side)
         } //: Button
         .buttonStyle(.plain)
@@ -77,6 +78,7 @@ struct TaskRowView: View {
     
     private var field: some View {
         TextField("Title", text: $item.title)
+            .focused($focused, equals: item.id)
     }
 }
 
