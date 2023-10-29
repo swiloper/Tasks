@@ -69,7 +69,9 @@ struct MainView: View {
         Menu {
             Picker(String.empty, selection: $theme) {
                 ForEach(Theme.allCases) {
-                    Text($0.name)
+                    Label($0.name, systemImage: "circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle($0.color)
                         .tag($0)
                 } //: ForEach
             } //: Picker
