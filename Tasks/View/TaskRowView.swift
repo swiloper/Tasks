@@ -7,42 +7,35 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct TaskRowView: View {
     
     // MARK: - Properties
     
+    @Environment(\.scenePhase) private var phase
     @Environment(\.modelContext) private var context
+    @AppStorage("theme", store: UserDefaults(suiteName: "group.tasks.storage")) private var theme: Theme = .blue
     @Query(sort: \Task.order) private var tasks: [Task]
-    @AppStorage("theme") private var theme: Theme = .blue
-
-    @Bindable var item: Task
+    
     @FocusState var focused: String?
+    @Bindable var task: Task
     
     private let inset: CGFloat = 8
+    
+    // MARK: - Remove
+    
+    private func remove(condition: Bool = true) {
+        if condition {
+            context.delete(task)
+        }
+    }
     
     // MARK: - Complete
     
     private func complete() {
-        item.isCompleted.toggle()
+        task.isCompleted.toggle()
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-        
-        var temp = tasks
-        temp = temp.sorted(by: { !$0.isCompleted && $1.isCompleted })
-        
-        DispatchQueue.main.schedule(after: .init(.now() + 0.25)) {
-            update(temp)
-        }
-    }
-    
-    // MARK: - Update
-    
-    private func update(_ with: [Task]) {
-        for order in with.indices {
-            if let index = tasks.firstIndex(where: { with[order].id == $0.id }) {
-                tasks[index].order = order
-            }
-        }
     }
     
     // MARK: - Body
@@ -55,6 +48,20 @@ struct TaskRowView: View {
         .listRowSeparator(.hidden)
         .listSectionSeparator(.hidden)
         .listRowInsets(EdgeInsets(top: .zero, leading: inset, bottom: .zero, trailing: inset))
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            delete
+        }
+        .onSubmit {
+            remove(condition: task.title.isEmpty)
+        }
+        .onChange(of: phase) {
+            if $1 == .active {
+                task.isCompleted = task.isCompleted
+            } else {
+                remove(condition: task.title.isEmpty)
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+        }
     }
     
     // MARK: - Checkmark
@@ -63,13 +70,12 @@ struct TaskRowView: View {
         Button {
             complete()
         } label: {
-            let side: CGFloat = 44
-            
-            Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+            Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                 .font(.title2)
                 .symbolRenderingMode(.palette)
-                .foregroundStyle(item.isCompleted ? .white : theme.color, theme.color)
-                .frame(width: side, height: side)
+                .foregroundStyle(task.isCompleted ? .white : theme.color, theme.color)
+                .animation(.bouncy, value: task.isCompleted)
+                .padding(inset)
         } //: Button
         .buttonStyle(.plain)
     }
@@ -77,13 +83,23 @@ struct TaskRowView: View {
     // MARK: - Field
     
     private var field: some View {
-        TextField("Title", text: $item.title)
-            .focused($focused, equals: item.id)
+        TextField("Title", text: $task.title)
+            .focused($focused, equals: task.id)
+    }
+    
+    // MARK: - Delete
+    
+    private var delete: some View {
+        Button(role: .destructive) {
+            remove()
+        } label: {
+            Image(systemName: "trash.fill")
+        } //: Button
     }
 }
 
 // MARK: - Preview
 
 #Preview("Row") {
-    TaskRowView(item: Task(order: .zero))
+    TaskRowView(task: Task(order: .zero))
 }

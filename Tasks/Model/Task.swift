@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 final class Task: Identifiable {
-    
+     
     // MARK: - Properties
     
     let id: String
