@@ -12,6 +12,8 @@ struct Widgets: Widget {
     
     // MARK: - Properties
     
+    @AppStorage("isDarkModeEnabled", store: UserDefaults(suiteName: "group.tasks.storage")) private var isDarkModeEnabled: Bool = false
+    
     let kind: String = "Widgets"
     
     // MARK: - Body
@@ -19,11 +21,12 @@ struct Widgets: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             WidgetsEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
                 .modelContainer(for: Task.self)
+                .containerBackground(isDarkModeEnabled ? Color.dark : Color.light, for: .widget)
+                .environment(\.colorScheme, isDarkModeEnabled ? .dark : .light)
         } //: StaticConfiguration
-        .configurationDisplayName("List")
-        .description("Get quick access to your reminders.")
+        .configurationDisplayName("Pending")
+        .description("Get quick access to your not finished reminders.")
     }
 }
 

@@ -24,22 +24,23 @@ enum Theme: String, Identifiable, CaseIterable {
     var color: Color {
         switch self {
         case .red:
-            Color.red
+            .red
         case .orange:
-            Color.orange
+            .orange
         case .yellow:
-            Color.yellow
+            .yellow
         case .green:
-            Color.green
+            .green
         case .blue:
-            Color.blue
+            .blue
         case .purple:
-            Color.purple
+            .purple
         case .indigo:
-            Color.indigo
+            .indigo
         }
     }
     
+    @available(iOSApplicationExtension, unavailable)
     var icon: Icon {
         Icon(light: "Light" + name, dark: "Dark" + name)
     }

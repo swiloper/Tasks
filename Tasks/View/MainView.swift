@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct MainView: View {
     
@@ -14,9 +15,27 @@ struct MainView: View {
     
     @Environment(\.modelContext) private var context
     @Query(sort: \Task.order) private var tasks: [Task]
-    @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled: Bool = false
-    @AppStorage("theme") private var theme: Theme = .blue
+    @AppStorage("isDarkModeEnabled", store: UserDefaults(suiteName: "group.tasks.storage")) private var isDarkModeEnabled: Bool = false
+    @AppStorage("theme", store: UserDefaults(suiteName: "group.tasks.storage")) private var theme: Theme = .blue
     @FocusState private var focused: String?
+    
+    private let inset: CGFloat = 8
+    
+    // MARK: - Personalize
+    
+    private func personalize() {
+        theme.icon.change(isDark: isDarkModeEnabled)
+    }
+    
+    // MARK: - Add
+    
+    private func add() {
+        let task = Task(order: tasks.count)
+        context.insert(task)
+        focused = task.id
+        
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+    }
     
     // MARK: - Update
     
@@ -49,7 +68,9 @@ struct MainView: View {
             }
         } //: NavigationStack
         .environment(\.colorScheme, isDarkModeEnabled ? .dark : .light)
-        .animation(.smooth, value: isDarkModeEnabled)
+        .onChange(of: [theme.hashValue, isDarkModeEnabled.hashValue]) {
+            personalize()
+        }
     }
     
     // MARK: - Toolbar
@@ -77,16 +98,11 @@ struct MainView: View {
                 } //: ForEach
             } //: Picker
         } label: {
-            let side: CGFloat = 44
-            
             Image(systemName: "circle.inset.filled")
                 .font(.headline)
                 .foregroundStyle(theme.color)
-                .frame(width: side, height: side)
+                .padding(inset)
         } //: Menu
-        .onChange(of: theme) {
-            $1.icon.change(isDark: isDarkModeEnabled)
-        }
     }
     
     // MARK: - Switcher
@@ -95,17 +111,12 @@ struct MainView: View {
         Button {
             isDarkModeEnabled.toggle()
         } label: {
-            let side: CGFloat = 44
-            
             Image(systemName: isDarkModeEnabled ? "sun.max.fill" : "moon.fill")
                 .font(.headline)
                 .symbolEffect(.bounce, value: isDarkModeEnabled)
                 .foregroundStyle(isDarkModeEnabled ? .yellow : .indigo)
-                .frame(width: side, height: side)
+                .padding(inset)
         } //: Button
-        .onChange(of: isDarkModeEnabled) {
-            theme.icon.change(isDark: $1)
-        }
     }
     
     // MARK: - Empty
@@ -118,14 +129,15 @@ struct MainView: View {
     
     private var list: some View {
         List {
-            ForEach(tasks) { task in
-                TaskRowView(item: task, focused: _focused)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            context.delete(task)
-                        } label: {
-                            Image(systemName: "trash.fill")
-                        } //: Button
+            ForEach(tasks) {
+                TaskRowView(focused: _focused, task: $0)
+                    .onChange(of: $0.isCompleted) {
+                        var temp = tasks
+                        temp = temp.sorted(by: { !$0.isCompleted && $1.isCompleted })
+                        
+                        DispatchQueue.main.schedule(after: .init(.now() + 0.25)) {
+                            update(temp)
+                        }
                     }
             } //: ForEach
             .onMove { from, to in
@@ -134,8 +146,8 @@ struct MainView: View {
                 update(temp)
             }
         } //: List
-        .scrollIndicators(.hidden)
         .listStyle(.plain)
+        .scrollIndicators(.hidden)
         .animation(.default, value: tasks)
     }
     
@@ -143,16 +155,13 @@ struct MainView: View {
     
     private var plus: some View {
         Button {
-            let new = Task(order: tasks.count)
-            context.insert(new)
-            focused = new.id
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            add()
         } label: {
             Image(systemName: "plus.circle.fill")
+                .font(.largeTitle)
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(.white, theme.color)
-                .font(.largeTitle)
-                .padding(16)
+                .padding(inset * 2)
         } //: Button
         .buttonStyle(.plain)
     }

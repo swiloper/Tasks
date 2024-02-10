@@ -33,10 +33,21 @@ struct CompleteTaskIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult {
         let context = try ModelContext( ModelContainer(for: Task.self))
-        let descriptor = FetchDescriptor(predicate: #Predicate<Task> { $0.id == id })
+        let descriptor = FetchDescriptor(predicate: #Predicate<Task> { !$0.isCompleted }, sortBy: [SortDescriptor(\.order)])
+        let tasks = try context.fetch(descriptor)
         
-        if let task = try context.fetch(descriptor).first {
-            task.isCompleted = true
+        if let completed = tasks.first(where: { $0.id == id }) {
+            completed.isCompleted = true
+            
+            var temp = tasks
+            temp = temp.sorted(by: { !$0.isCompleted && $1.isCompleted })
+            
+            for order in temp.indices {
+                if let index = tasks.firstIndex(where: { temp[order].id == $0.id }) {
+                    tasks[index].order = order
+                }
+            }
+            
             try context.save()
         }
         
